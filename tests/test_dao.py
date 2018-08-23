@@ -1,17 +1,17 @@
 import mongomock
+from mock import mock
 
 from complainio.dao import ComplainDAO
 from tests import BaseTestCase
 
 
 class ComplainDAOTestCase(BaseTestCase):
-    def setUp(self):
-        mongoclient = mongomock.MongoClient()
-        database = mongoclient.complainio
-        collection = database.complains
-        self.complain_dao = ComplainDAO(collection=collection)
 
-    def test_save_complain(self):
+    @mock.patch('complainio.dao.ComplainDAO._get_collection')
+    def test_save_complain(self, mock_get_collection):
+        mock_get_collection.return_value = self.get_collection()
+
+        complain_dao = ComplainDAO()
         complain = {
             'title': 'Problema com app do banco',
             'description': 'Tento abrir o app, mas não consigo.',
@@ -23,22 +23,30 @@ class ComplainDAOTestCase(BaseTestCase):
                 'state': 'SP'
             }
         }
-        self.complain_dao.save(complain=complain)
-        result = self.complain_dao.find_by(title='Problema com app do banco')[0]
+        complain_dao.save(complain=complain)
+        result = complain_dao.find_by(title='Problema com app do banco')[0]
         result.pop('ObjectId', None)
 
         self.assertDictEqual(result, complain)
 
-    def test_find_complain_by_specific_field(self):
+    @mock.patch('complainio.dao.ComplainDAO._get_collection')
+    def test_find_complain_by_specific_field(self, mock_get_collection):
+        mock_get_collection.return_value = self.get_collection()
+
+        complain_dao = ComplainDAO()
         complain = {'title': 'Teste'}
-        self.complain_dao.save(complain=complain)
+        complain_dao.save(complain=complain)
 
-        result = self.complain_dao.find_by(title='Teste')[0]
+        result = complain_dao.find_by(title='Teste')[0]
         result.pop('ObjectId', None)
 
         self.assertDictEqual(result, complain)
 
-    def test_find_all_complains(self):
+    @mock.patch('complainio.dao.ComplainDAO._get_collection')
+    def test_find_all_complains(self, mock_get_collection):
+        mock_get_collection.return_value = self.get_collection()
+
+        complain_dao = ComplainDAO()
         complain1 = {
             'title': 'Problema com app do banco',
             'description': 'Tento abrir o app, mas não consigo.',
@@ -62,8 +70,8 @@ class ComplainDAOTestCase(BaseTestCase):
                 'state': 'SP'
             }
         }
-        self.complain_dao.save(complain=complain1)
-        self.complain_dao.save(complain=complain2)
+        complain_dao.save(complain=complain1)
+        complain_dao.save(complain=complain2)
 
-        results = self.complain_dao.all()
+        results = complain_dao.all()
         self.assertEqual(2, len(results))

@@ -13,11 +13,10 @@ def healthcheck():
 
 @api_v1.route('/complains', methods=['POST'])
 def save_complain():
-    complain_dao = ComplainDAO()
-
     complain = ComplainSchema().load(request.get_json())
     if complain.errors:
         return jsonify({'errors': complain.errors}), 400
     else:
+        complain_dao = ComplainDAO()
         complain_dao.save(complain=complain.data)
         return jsonify({}), 201
