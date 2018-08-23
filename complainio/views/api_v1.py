@@ -18,5 +18,5 @@ def save_complain():
         return jsonify({'errors': complain.errors}), 400
     else:
         complain_dao = ComplainDAO()
-        complain_dao.save(complain=complain.data)
-        return jsonify({}), 201
+        complain_id = complain_dao.save(complain=complain.data)
+        return jsonify({'id': complain_id}), 201

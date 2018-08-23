@@ -32,8 +32,9 @@ class APIV1TestCase(BaseTestCase):
         response = self.client.post('/api/v1/complains', data=json.dumps(body), content_type='application/json')
         self.assertEqual(201, response.status_code)
 
+        complain_id = json.loads(response.data).get('id')
         complain_dao = ComplainDAO()
-        result = complain_dao.find_by(title='Problema com app do banco')[0]
+        result = complain_dao.get(complain_id)
         result.pop('_id', None)
         self.assertDictEqual(result, body)
 

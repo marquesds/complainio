@@ -1,3 +1,5 @@
+from bson import ObjectId
+
 from complainio import mongo
 
 
@@ -9,13 +11,17 @@ class ComplainDAO:
         return mongo.db.complainio
 
     def save(self, complain):
-        self.collection.insert_one(complain)
+        result = self.collection.insert_one(complain)
+        return str(result.inserted_id)
 
     def update(self):
         pass
 
     def delete(self):
         pass
+
+    def get(self, complain_id):
+        return self.collection.find_one({'_id': ObjectId(complain_id)})
 
     def find_by(self, **kwargs):
         result = self.collection.find(kwargs)
