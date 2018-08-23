@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 
 from complainio.dao import ComplainDAO
-from complainio.schemas import ComplainSchema
+from complainio.schemas import ComplainSchema, LocaleSchema
 
 api_v1 = Blueprint('api_v1', __name__, url_prefix='/api/v1')
 
@@ -61,7 +61,21 @@ def delete_complain_by_id(complain_id):
 
 
 @api_v1.route('/complains/count', methods=['GET'])
-def get_complain_count_by_locale():
+def get_all_complain_count_by_locale():
     complain_dao = ComplainDAO()
-    grouped_complains = complain_dao.get_complain_count_by_locale()
+    grouped_complains = complain_dao.get_complain_count_per_locale()
     return jsonify(grouped_complains), 200
+
+
+@api_v1.route('/complains/count', methods=['POST'])
+def get_complain_count_by_locale():
+    locale = LocaleSchema().load(request.get_json())
+    if locale.errors:
+        return jsonify({'errors': locale.errors}), 400
+    else:
+        complain_dao = ComplainDAO()
+        complain = complain_dao.get_specific_complain_count_by_locale(locale.data)
+        if complain:
+            return jsonify(complain), 200
+        else:
+            return jsonify({}), 404

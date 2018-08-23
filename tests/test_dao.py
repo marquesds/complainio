@@ -229,7 +229,7 @@ class ComplainDAOTestCase(BaseTestCase):
         self.assertListEqual([], results)
 
     @mock.patch('complainio.dao.ComplainDAO._get_collection')
-    def test_get_complain_count_by_locale(self, mock_get_collection):
+    def test_get_complain_count_per_locale(self, mock_get_collection):
         mock_get_collection.return_value = self.get_collection()
 
         complain_dao = ComplainDAO()
@@ -243,17 +243,50 @@ class ComplainDAOTestCase(BaseTestCase):
 
         complain_dao.save({'locale': {'city': 'Curitiba', 'state': 'PR'}})
 
-        results = complain_dao.get_complain_count_by_locale('$locale.city')
+        results = complain_dao.get_complain_count_per_locale('$locale.city')
 
         # the real results will be something like [{'São Paulo - SP': 4}, {'Fortaleza - CE': 2}, ...]
         expected = [{'São Paulo': 4}, {'Fortaleza': 2}, {'Curitiba': 1}]
         self.assertListEqual(expected, results)
 
     @mock.patch('complainio.dao.ComplainDAO._get_collection')
-    def test_get_complain_count_by_locale_empty_result(self, mock_get_collection):
+    def test_get_complain_count_per_locale_empty_result(self, mock_get_collection):
         mock_get_collection.return_value = self.get_collection()
 
         complain_dao = ComplainDAO()
-        results = complain_dao.get_complain_count_by_locale('$locale.city')
+        results = complain_dao.get_complain_count_per_locale('$locale.city')
 
         self.assertListEqual([], results)
+
+    @mock.patch('complainio.dao.ComplainDAO._get_collection')
+    def test_get_specific_complain_count_by_locale(self, mock_get_collection):
+        mock_get_collection.return_value = self.get_collection()
+
+        complain_dao = ComplainDAO()
+        complain_dao.save({'locale': {'city': 'São Paulo', 'state': 'SP'}})
+        complain_dao.save({'locale': {'city': 'São Paulo', 'state': 'SP'}})
+        complain_dao.save({'locale': {'city': 'São Paulo', 'state': 'SP'}})
+        complain_dao.save({'locale': {'city': 'São Paulo', 'state': 'SP'}})
+
+        complain_dao.save({'locale': {'city': 'Fortaleza', 'state': 'CE'}})
+        complain_dao.save({'locale': {'city': 'Fortaleza', 'state': 'CE'}})
+
+        complain_dao.save({'locale': {'city': 'Curitiba', 'state': 'PR'}})
+
+        result = complain_dao.get_specific_complain_count_by_locale({'city': 'São Paulo', 'state': 'SP'})
+
+        # the real result will be something like {'São Paulo - SP': 4}
+        expected = {
+            'São Paulo': 4
+        }
+
+        self.assertDictEqual(expected, result)
+
+    @mock.patch('complainio.dao.ComplainDAO._get_collection')
+    def test_get_specific_complain_count_by_locale_empty_result(self, mock_get_collection):
+        mock_get_collection.return_value = self.get_collection()
+
+        complain_dao = ComplainDAO()
+        results = complain_dao.get_specific_complain_count_by_locale({'city': 'Curitiba', 'state': 'PR'})
+
+        self.assertDictEqual({}, results)

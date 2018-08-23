@@ -268,7 +268,7 @@ class APIV1TestCase(BaseTestCase):
         self.assertDictEqual(result, complain2)
 
     @mock.patch('complainio.dao.ComplainDAO._get_collection')
-    def test_get_complain_count_by_locale(self, mock_get_collection):
+    def test_get_all_complain_count_by_locale(self, mock_get_collection):
         mock_get_collection.return_value = self.get_collection()
 
         complain_dao = ComplainDAO()
@@ -288,3 +288,60 @@ class APIV1TestCase(BaseTestCase):
         # the real results will be something like [{'São Paulo - SP': 4}, {'Fortaleza - CE': 2}, ...]
         expected = [{'São Paulo': 4}, {'Fortaleza': 2}, {'Curitiba': 1}]
         self.assertListEqual(expected, json.loads(response.data))
+
+    @mock.patch('complainio.dao.ComplainDAO._get_collection')
+    def test_get_complain_count_by_locale(self, mock_get_collection):
+        mock_get_collection.return_value = self.get_collection()
+
+        complain_dao = ComplainDAO()
+        complain_dao.save({'locale': {'city': 'São Paulo', 'state': 'SP'}})
+        complain_dao.save({'locale': {'city': 'São Paulo', 'state': 'SP'}})
+        complain_dao.save({'locale': {'city': 'São Paulo', 'state': 'SP'}})
+        complain_dao.save({'locale': {'city': 'São Paulo', 'state': 'SP'}})
+
+        complain_dao.save({'locale': {'city': 'Fortaleza', 'state': 'CE'}})
+        complain_dao.save({'locale': {'city': 'Fortaleza', 'state': 'CE'}})
+
+        complain_dao.save({'locale': {'city': 'Curitiba', 'state': 'PR'}})
+
+        locale = {
+            'city': 'São Paulo',
+            'state': 'SP'
+        }
+
+        response = self.client.post('/api/v1/complains/count', data=json.dumps(locale), content_type='application/json')
+        self.assertEqual(200, response.status_code)
+
+        expected = {
+            'São Paulo': 4
+        }
+
+        self.assertDictEqual(expected, json.loads(response.data))
+
+    def test_get_complain_count_by_locale_invalid_body(self):
+        locale = {
+            'state': 'SP'
+        }
+
+        response = self.client.post('/api/v1/complains/count', data=json.dumps(locale), content_type='application/json')
+        self.assertEqual(400, response.status_code)
+
+        expected = {
+            'errors': {
+                'city': ['Missing data for required field.']
+            }
+        }
+
+        self.assertDictEqual(expected, json.loads(response.data))
+
+    @mock.patch('complainio.dao.ComplainDAO._get_collection')
+    def test_get_complain_count_by_locale_empty_response(self, mock_get_collection):
+        mock_get_collection.return_value = self.get_collection()
+
+        locale = {
+            'city': 'São Paulo',
+            'state': 'SP'
+        }
+
+        response = self.client.post('/api/v1/complains/count', data=json.dumps(locale), content_type='application/json')
+        self.assertEqual(404, response.status_code)

@@ -40,13 +40,13 @@ class ComplainDAO:
     def all(self):
         return list(self.collection.find())
 
-    def get_complain_count_by_locale(self, locale='$locale.city'):
+    def get_complain_count_per_locale(self, _id='$locale.city'):
         # hack to deal with unit tests (mongomock is not working very well for aggregations)
         if not os.getenv('ENVIRONMENT') == 'Testing':
-            locale = {'$concat': ['$locale.city', ' - ', '$locale.state']}
+            _id = {'$concat': ['$locale.city', ' - ', '$locale.state']}
 
         pipeline = [
-            {'$group': {'_id': locale, 'count': {'$sum': 1}}},
+            {'$group': {'_id': _id, 'count': {'$sum': 1}}},
             {'$sort': SON([('count', -1), ('_id', -1)])}
         ]
         results = self.collection.aggregate(pipeline)
@@ -55,3 +55,16 @@ class ComplainDAO:
             cleaned_result = {result['_id']: result['count']}
             cleaned_results.append(cleaned_result)
         return cleaned_results
+
+    def get_specific_complain_count_by_locale(self, locale):
+        if not os.getenv('ENVIRONMENT') == 'Testing':
+            locale_str = locale['city'] + ' - ' + locale['state']
+        else:
+            locale_str = locale['city']
+
+        complains = self.get_complain_count_per_locale()
+        result = list(filter(lambda x: locale_str in x, complains))
+        if result:
+            return result[0]
+        else:
+            return {}
