@@ -5,6 +5,7 @@ import os
 from bson import ObjectId
 from flask import Flask
 from flask_pymongo import PyMongo
+from itsdangerous import TimestampSigner
 
 mongo = PyMongo()
 logger = logging.getLogger(__name__)
@@ -23,6 +24,7 @@ def create_app(environment=os.getenv('ENVIRONMENT', 'Development')):
     logger.setLevel(app.config['LOGS_LEVEL'])
 
     app.json_encoder = JSONEncoder
+    app.signer = TimestampSigner(app.config['SECRET_KEY'])
 
     if not environment == 'Testing':
         mongo.init_app(app)

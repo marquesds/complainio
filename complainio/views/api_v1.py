@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 
 from complainio.dao import ComplainDAO
+from complainio.decorators import requires_api_key
 from complainio.schemas import ComplainSchema, LocaleSchema
 
 api_v1 = Blueprint('api_v1', __name__, url_prefix='/api/v1')
@@ -12,6 +13,7 @@ def healthcheck():
 
 
 @api_v1.route('/complains', methods=['POST'])
+@requires_api_key
 def save_complain():
     complain = ComplainSchema().load(request.get_json())
     if complain.errors:
@@ -23,6 +25,7 @@ def save_complain():
 
 
 @api_v1.route('/complains/<complain_id>', methods=['GET'])
+@requires_api_key
 def get_complain_by_id(complain_id):
     complain_dao = ComplainDAO()
     complain = complain_dao.get(complain_id)
@@ -33,6 +36,7 @@ def get_complain_by_id(complain_id):
 
 
 @api_v1.route('/complains', methods=['GET'])
+@requires_api_key
 def get_all_complains():
     complain_dao = ComplainDAO()
     complains = complain_dao.all()
@@ -43,6 +47,7 @@ def get_all_complains():
 
 
 @api_v1.route('/complains/<complain_id>', methods=['PUT'])
+@requires_api_key
 def update_complain_document_by_id(complain_id):
     complain = ComplainSchema().load(request.get_json())
     if complain.errors:
@@ -54,6 +59,7 @@ def update_complain_document_by_id(complain_id):
 
 
 @api_v1.route('/complains/<complain_id>', methods=['DELETE'])
+@requires_api_key
 def delete_complain_by_id(complain_id):
     complain_dao = ComplainDAO()
     complain_dao.delete(complain_id)
@@ -61,6 +67,7 @@ def delete_complain_by_id(complain_id):
 
 
 @api_v1.route('/complains/count', methods=['GET'])
+@requires_api_key
 def get_all_complain_count_by_locale():
     complain_dao = ComplainDAO()
     grouped_complains = complain_dao.get_complain_count_per_locale()
@@ -68,6 +75,7 @@ def get_all_complain_count_by_locale():
 
 
 @api_v1.route('/complains/count', methods=['POST'])
+@requires_api_key
 def get_complain_count_by_locale():
     locale = LocaleSchema().load(request.get_json())
     if locale.errors:

@@ -9,6 +9,8 @@ class Config:
 
     MONGO_URI = os.getenv('MONGO_URI')
 
+    SECRET_KEY = os.getenv('SECRET_KEY', 'default_key')
+
 
 class Testing(Config):
     TESTING = True

@@ -7,6 +7,10 @@ from tests import BaseTestCase
 
 
 class APIV1TestCase(BaseTestCase):
+    def setUp(self):
+        super().setUp()
+        self.api_key = 'apikey="test.DmDXkA.MEbhZQ_DQcGzPKzyQnl_e0MCNZ4"'
+
     def test_healthcheck(self):
         response = self.client.get('/api/v1/health')
 
@@ -29,7 +33,8 @@ class APIV1TestCase(BaseTestCase):
             }
         }
 
-        response = self.client.post('/api/v1/complains', data=json.dumps(body), content_type='application/json')
+        response = self.client.post('/api/v1/complains', data=json.dumps(body), content_type='application/json',
+                                    headers={'Authorization': self.api_key})
         self.assertEqual(201, response.status_code)
 
         complain_id = json.loads(response.data).get('id')
@@ -50,7 +55,8 @@ class APIV1TestCase(BaseTestCase):
             }
         }
 
-        response = self.client.post('/api/v1/complains', data=json.dumps(body), content_type='application/json')
+        response = self.client.post('/api/v1/complains', data=json.dumps(body), content_type='application/json',
+                                    headers={'Authorization': self.api_key})
         self.assertEqual(400, response.status_code)
 
         expected = {
@@ -79,7 +85,7 @@ class APIV1TestCase(BaseTestCase):
         }
 
         complain_id = complain_dao.save(complain=complain)
-        response = self.client.get(f'/api/v1/complains/{complain_id}')
+        response = self.client.get(f'/api/v1/complains/{complain_id}', headers={'Authorization': self.api_key})
         self.assertEqual(200, response.status_code)
         expected = json.loads(response.data)
         complain.pop('_id')
@@ -90,7 +96,7 @@ class APIV1TestCase(BaseTestCase):
     def test_get_complain_by_id_empty_response(self, mock_get_collection):
         mock_get_collection.return_value = self.get_collection()
 
-        response = self.client.get('/api/v1/complains/1234')
+        response = self.client.get('/api/v1/complains/1234', headers={'Authorization': self.api_key})
         self.assertEqual(404, response.status_code)
 
     @mock.patch('complainio.dao.ComplainDAO._get_collection')
@@ -124,7 +130,7 @@ class APIV1TestCase(BaseTestCase):
         complain_dao.save(complain=complain1)
         complain_dao.save(complain=complain2)
 
-        response = self.client.get('/api/v1/complains')
+        response = self.client.get('/api/v1/complains', headers={'Authorization': self.api_key})
         self.assertEqual(200, response.status_code)
         self.assertEqual(2, len(json.loads(response.data)))
 
@@ -132,7 +138,7 @@ class APIV1TestCase(BaseTestCase):
     def test_get_all_complains_empty_response(self, mock_get_collection):
         mock_get_collection.return_value = self.get_collection()
 
-        response = self.client.get('/api/v1/complains')
+        response = self.client.get('/api/v1/complains', headers={'Authorization': self.api_key})
         self.assertEqual(404, response.status_code)
 
     @mock.patch('complainio.dao.ComplainDAO._get_collection')
@@ -170,7 +176,8 @@ class APIV1TestCase(BaseTestCase):
         response = self.client.put(
             f'/api/v1/complains/{complain_id}',
             data=json.dumps(complain_new_body),
-            content_type='application/json'
+            content_type='application/json',
+            headers={'Authorization': self.api_key}
         )
 
         self.assertEqual(200, response.status_code)
@@ -214,7 +221,8 @@ class APIV1TestCase(BaseTestCase):
         response = self.client.put(
             f'/api/v1/complains/{complain_id}',
             data=json.dumps(complain_new_body),
-            content_type='application/json'
+            content_type='application/json',
+            headers={'Authorization': self.api_key}
         )
 
         self.assertEqual(400, response.status_code)
@@ -258,7 +266,7 @@ class APIV1TestCase(BaseTestCase):
         complain_id1 = complain_dao.save(complain=complain1)
         complain_id2 = complain_dao.save(complain=complain2)
 
-        response = self.client.delete(f'/api/v1/complains/{complain_id1}')
+        response = self.client.delete(f'/api/v1/complains/{complain_id1}', headers={'Authorization': self.api_key})
         self.assertEqual(204, response.status_code)
 
         result = complain_dao.get(complain_id1)
@@ -282,7 +290,7 @@ class APIV1TestCase(BaseTestCase):
 
         complain_dao.save({'locale': {'city': 'Curitiba', 'state': 'PR'}})
 
-        response = self.client.get('/api/v1/complains/count')
+        response = self.client.get('/api/v1/complains/count', headers={'Authorization': self.api_key})
         self.assertEqual(200, response.status_code)
 
         # the real results will be something like [{'São Paulo - SP': 4}, {'Fortaleza - CE': 2}, ...]
@@ -309,7 +317,8 @@ class APIV1TestCase(BaseTestCase):
             'state': 'SP'
         }
 
-        response = self.client.post('/api/v1/complains/count', data=json.dumps(locale), content_type='application/json')
+        response = self.client.post('/api/v1/complains/count', data=json.dumps(locale), content_type='application/json',
+                                    headers={'Authorization': self.api_key})
         self.assertEqual(200, response.status_code)
 
         expected = {
@@ -323,7 +332,8 @@ class APIV1TestCase(BaseTestCase):
             'state': 'SP'
         }
 
-        response = self.client.post('/api/v1/complains/count', data=json.dumps(locale), content_type='application/json')
+        response = self.client.post('/api/v1/complains/count', data=json.dumps(locale), content_type='application/json',
+                                    headers={'Authorization': self.api_key})
         self.assertEqual(400, response.status_code)
 
         expected = {
@@ -343,5 +353,6 @@ class APIV1TestCase(BaseTestCase):
             'state': 'SP'
         }
 
-        response = self.client.post('/api/v1/complains/count', data=json.dumps(locale), content_type='application/json')
+        response = self.client.post('/api/v1/complains/count', data=json.dumps(locale), content_type='application/json',
+                                    headers={'Authorization': self.api_key})
         self.assertEqual(404, response.status_code)
