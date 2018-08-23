@@ -136,6 +136,51 @@ class APIV1TestCase(BaseTestCase):
         self.assertEqual(404, response.status_code)
 
     @mock.patch('complainio.dao.ComplainDAO._get_collection')
+    def test_update_complain_by_id(self, mock_get_collection):
+        mock_get_collection.return_value = self.get_collection()
+
+        complain_dao = ComplainDAO()
+        complain = {
+            'title': 'Problema com app do banco',
+            'description': 'Tento abrir o app, mas não consigo.',
+            'company': {
+                'name': 'Itaú'
+            },
+            'locale': {
+                'city': 'São Paulo',
+                'state': 'SP'
+            }
+        }
+        complain_id = complain_dao.save(complain=complain)
+        result = complain_dao.get(complain_id)
+        self.assertDictEqual(result, complain)
+
+        complain_new_body = {
+            'title': 'Meu livro não chegou',
+            'description': 'Encomendei um livro há 40 dias e ainda não chegou.',
+            'company': {
+                'name': 'Amazon'
+            },
+            'locale': {
+                'city': 'São Paulo',
+                'state': 'SP'
+            }
+        }
+
+        response = self.client.put(
+            f'/api/v1/complains/{complain_id}',
+            data=json.dumps(complain_new_body),
+            content_type='application/json'
+        )
+
+        self.assertEqual(200, response.status_code)
+
+        result = complain_dao.get(complain_id)
+        result.pop('_id')
+
+        self.assertDictEqual(result, complain_new_body)
+
+    @mock.patch('complainio.dao.ComplainDAO._get_collection')
     def test_delete_complain_by_id(self, mock_get_collection):
         mock_get_collection.return_value = self.get_collection()
 

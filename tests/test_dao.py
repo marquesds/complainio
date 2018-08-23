@@ -125,6 +125,68 @@ class ComplainDAOTestCase(BaseTestCase):
         self.assertListEqual([], results)
 
     @mock.patch('complainio.dao.ComplainDAO._get_collection')
+    def test_update_complain(self, mock_get_collection):
+        mock_get_collection.return_value = self.get_collection()
+
+        complain_dao = ComplainDAO()
+        complain = {
+            'title': 'Problema com app do banco',
+            'description': 'Tento abrir o app, mas não consigo.',
+            'company': {
+                'name': 'Itaú'
+            },
+            'locale': {
+                'city': 'São Paulo',
+                'state': 'SP'
+            }
+        }
+        complain_id = complain_dao.save(complain=complain)
+        result = complain_dao.get(complain_id)
+        self.assertDictEqual(result, complain)
+
+        complain_new_body = {
+            'title': 'Meu livro não chegou',
+            'description': 'Encomendei um livro há 40 dias e ainda não chegou.',
+            'company': {
+                'name': 'Amazon'
+            },
+            'locale': {
+                'city': 'São Paulo',
+                'state': 'SP'
+            }
+        }
+
+        complain_dao.update(complain_id, complain_new_body)
+        result = complain_dao.get(complain_id)
+        result.pop('_id')
+
+        self.assertDictEqual(result, complain_new_body)
+
+    @mock.patch('complainio.dao.ComplainDAO._get_collection')
+    def test_try_update_nonexistent_complain(self, mock_get_collection):
+        mock_get_collection.return_value = self.get_collection()
+
+        complain_dao = ComplainDAO()
+
+        complain_new_body = {
+            'title': 'Meu livro não chegou',
+            'description': 'Encomendei um livro há 40 dias e ainda não chegou.',
+            'company': {
+                'name': 'Amazon'
+            },
+            'locale': {
+                'city': 'São Paulo',
+                'state': 'SP'
+            }
+        }
+
+        complain_id = str(ObjectId())
+        complain_dao.update(complain_id, complain_new_body)
+
+        result = complain_dao.get(complain_id)
+        self.assertIsNone(result)
+
+    @mock.patch('complainio.dao.ComplainDAO._get_collection')
     def test_delete_complain(self, mock_get_collection):
         mock_get_collection.return_value = self.get_collection()
 

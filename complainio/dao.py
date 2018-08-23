@@ -15,8 +15,12 @@ class ComplainDAO:
         result = self.collection.insert_one(complain)
         return str(result.inserted_id)
 
-    def update(self):
-        pass
+    def update(self, complain_id, complain_new_body):
+        self.collection.update_one({
+            '_id': ObjectId(complain_id)},
+            {'$set': complain_new_body},
+            upsert=False
+        )
 
     def delete(self, complain_id):
         self.collection.delete_one({'_id': ObjectId(complain_id)})

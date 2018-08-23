@@ -42,6 +42,17 @@ def get_all_complains():
         return jsonify(complains), 200
 
 
+@api_v1.route('/complains/<complain_id>', methods=['PUT'])
+def update_complain_document_by_id(complain_id):
+    complain = ComplainSchema().load(request.get_json())
+    if complain.errors:
+        return jsonify({'errors': complain.errors}), 400
+    else:
+        complain_dao = ComplainDAO()
+        complain_dao.update(complain_id, complain.data)
+        return jsonify({}), 200
+
+
 @api_v1.route('/complains/<complain_id>', methods=['DELETE'])
 def delete_complain_by_id(complain_id):
     complain_dao = ComplainDAO()
