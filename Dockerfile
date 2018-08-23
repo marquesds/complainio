@@ -1,4 +1,4 @@
-FROM python:3.6.6-alpine3.8
+FROM python:3.7-alpine
 MAINTAINER Lucas Marques <lucasmarquesds@gmail.com>
 
 RUN apk add --no-cache --update bash git openssh-client libffi-dev linux-headers alpine-sdk build-base
