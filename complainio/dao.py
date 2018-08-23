@@ -1,4 +1,6 @@
-from bson import ObjectId
+import os
+
+from bson import ObjectId, SON
 from bson.errors import InvalidId
 
 from complainio import mongo
@@ -37,3 +39,19 @@ class ComplainDAO:
 
     def all(self):
         return list(self.collection.find())
+
+    def get_complain_count_by_locale(self, locale='$locale.city'):
+        # hack to deal with unit tests (mongomock is not working very well for aggregations)
+        if not os.getenv('ENVIRONMENT') == 'Testing':
+            locale = {'$concat': ['$locale.city', ' - ', '$locale.state']}
+
+        pipeline = [
+            {'$group': {'_id': locale, 'count': {'$sum': 1}}},
+            {'$sort': SON([('count', -1), ('_id', -1)])}
+        ]
+        results = self.collection.aggregate(pipeline)
+        cleaned_results = []
+        for result in results:
+            cleaned_result = {result['_id']: result['count']}
+            cleaned_results.append(cleaned_result)
+        return cleaned_results

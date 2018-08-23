@@ -266,3 +266,25 @@ class APIV1TestCase(BaseTestCase):
 
         result = complain_dao.get(complain_id2)
         self.assertDictEqual(result, complain2)
+
+    @mock.patch('complainio.dao.ComplainDAO._get_collection')
+    def test_get_complain_count_by_locale(self, mock_get_collection):
+        mock_get_collection.return_value = self.get_collection()
+
+        complain_dao = ComplainDAO()
+        complain_dao.save({'locale': {'city': 'São Paulo', 'state': 'SP'}})
+        complain_dao.save({'locale': {'city': 'São Paulo', 'state': 'SP'}})
+        complain_dao.save({'locale': {'city': 'São Paulo', 'state': 'SP'}})
+        complain_dao.save({'locale': {'city': 'São Paulo', 'state': 'SP'}})
+
+        complain_dao.save({'locale': {'city': 'Fortaleza', 'state': 'CE'}})
+        complain_dao.save({'locale': {'city': 'Fortaleza', 'state': 'CE'}})
+
+        complain_dao.save({'locale': {'city': 'Curitiba', 'state': 'PR'}})
+
+        response = self.client.get('/api/v1/complains/count')
+        self.assertEqual(200, response.status_code)
+
+        # the real results will be something like [{'São Paulo - SP': 4}, {'Fortaleza - CE': 2}, ...]
+        expected = [{'São Paulo': 4}, {'Fortaleza': 2}, {'Curitiba': 1}]
+        self.assertListEqual(expected, json.loads(response.data))

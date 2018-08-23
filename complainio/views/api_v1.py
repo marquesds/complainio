@@ -58,3 +58,10 @@ def delete_complain_by_id(complain_id):
     complain_dao = ComplainDAO()
     complain_dao.delete(complain_id)
     return jsonify({}), 204
+
+
+@api_v1.route('/complains/count', methods=['GET'])
+def get_complain_count_by_locale():
+    complain_dao = ComplainDAO()
+    grouped_complains = complain_dao.get_complain_count_by_locale()
+    return jsonify(grouped_complains), 200
