@@ -40,3 +40,10 @@ def get_all_complains():
         return jsonify({}), 404
     else:
         return jsonify(complains), 200
+
+
+@api_v1.route('/complains/<complain_id>', methods=['DELETE'])
+def delete_complain_by_id(complain_id):
+    complain_dao = ComplainDAO()
+    complain_dao.delete(complain_id)
+    return jsonify({}), 204

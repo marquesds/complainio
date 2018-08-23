@@ -18,8 +18,8 @@ class ComplainDAO:
     def update(self):
         pass
 
-    def delete(self):
-        pass
+    def delete(self, complain_id):
+        self.collection.delete_one({'_id': ObjectId(complain_id)})
 
     def get(self, complain_id):
         try:

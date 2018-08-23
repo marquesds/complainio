@@ -123,3 +123,45 @@ class ComplainDAOTestCase(BaseTestCase):
         results = complain_dao.all()
 
         self.assertListEqual([], results)
+
+    @mock.patch('complainio.dao.ComplainDAO._get_collection')
+    def test_delete_complain(self, mock_get_collection):
+        mock_get_collection.return_value = self.get_collection()
+
+        complain_dao = ComplainDAO()
+        complain = {
+            'title': 'Meu livro não chegou',
+            'description': 'Encomendei um livro há 40 dias e ainda não chegou.',
+            'company': {
+                'name': 'Amazon'
+            },
+            'locale': {
+                'city': 'São Paulo',
+                'state': 'SP'
+            }
+        }
+
+        complain_id = complain_dao.save(complain=complain)
+        result = complain_dao.get(complain_id)
+
+        self.assertDictEqual(result, complain)
+
+        complain_dao.delete(complain_id)
+        result = complain_dao.get(complain_id)
+
+        self.assertIsNone(result)
+
+    @mock.patch('complainio.dao.ComplainDAO._get_collection')
+    def test_try_delete_nonexistent_complain(self, mock_get_collection):
+        mock_get_collection.return_value = self.get_collection()
+
+        complain_id = str(ObjectId())
+        complain_dao = ComplainDAO()
+
+        results = complain_dao.all()
+        self.assertListEqual([], results)
+
+        complain_dao.delete(complain_id)
+
+        results = complain_dao.all()
+        self.assertListEqual([], results)
