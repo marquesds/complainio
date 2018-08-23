@@ -20,6 +20,7 @@ class JSONEncoder(json.JSONEncoder):
 def create_app(environment=os.getenv('ENVIRONMENT', 'Development')):
     app = Flask(__name__)
     app.config.from_object(f'complainio.config.{environment}')
+    logger.setLevel(app.config['LOGS_LEVEL'])
 
     app.json_encoder = JSONEncoder
 
