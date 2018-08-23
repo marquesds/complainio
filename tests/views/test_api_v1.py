@@ -60,3 +60,45 @@ class APIV1TestCase(BaseTestCase):
         }
 
         self.assertDictEqual(expected, json.loads(response.data))
+
+    @mock.patch('complainio.dao.ComplainDAO._get_collection')
+    def test_get_all_complains(self, mock_get_collection):
+        mock_get_collection.return_value = self.get_collection()
+
+        complain_dao = ComplainDAO()
+        complain1 = {
+            'title': 'Problema com app do banco',
+            'description': 'Tento abrir o app, mas não consigo.',
+            'company': {
+                'name': 'Itaú'
+            },
+            'locale': {
+                'city': 'São Paulo',
+                'state': 'SP'
+            }
+        }
+
+        complain2 = {
+            'title': 'Meu livro não chegou',
+            'description': 'Encomendei um livro há 40 dias e ainda não chegou.',
+            'company': {
+                'name': 'Amazon'
+            },
+            'locale': {
+                'city': 'São Paulo',
+                'state': 'SP'
+            }
+        }
+        complain_dao.save(complain=complain1)
+        complain_dao.save(complain=complain2)
+
+        response = self.client.get('/api/v1/complains')
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(2, len(json.loads(response.data)))
+
+    @mock.patch('complainio.dao.ComplainDAO._get_collection')
+    def test_get_all_complains_empty_response(self, mock_get_collection):
+        mock_get_collection.return_value = self.get_collection()
+
+        response = self.client.get('/api/v1/complains')
+        self.assertEqual(404, response.status_code)
