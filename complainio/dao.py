@@ -1,4 +1,5 @@
 from bson import ObjectId
+from bson.errors import InvalidId
 
 from complainio import mongo
 
@@ -21,7 +22,10 @@ class ComplainDAO:
         pass
 
     def get(self, complain_id):
-        return self.collection.find_one({'_id': ObjectId(complain_id)})
+        try:
+            return self.collection.find_one({'_id': ObjectId(complain_id)})
+        except InvalidId:
+            return None
 
     def find_by(self, **kwargs):
         result = self.collection.find(kwargs)

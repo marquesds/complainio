@@ -22,11 +22,21 @@ def save_complain():
         return jsonify({'id': complain_id}), 201
 
 
+@api_v1.route('/complains/<complain_id>', methods=['GET'])
+def get_complain_by_id(complain_id):
+    complain_dao = ComplainDAO()
+    complain = complain_dao.get(complain_id)
+    if not complain:
+        return jsonify({}), 404
+    else:
+        return jsonify(complain), 200
+
+
 @api_v1.route('/complains', methods=['GET'])
 def get_all_complains():
     complain_dao = ComplainDAO()
-    results = complain_dao.all()
-    if not results:
+    complains = complain_dao.all()
+    if not complains:
         return jsonify({}), 404
     else:
-        return jsonify(complain_dao.all()), 200
+        return jsonify(complains), 200
