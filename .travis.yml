@@ -1,0 +1,19 @@
+language: python
+
+python:
+  - "3.5"
+  - "3.6"
+  - "3.7"
+
+before_install:
+  - export ENVIRONMENT=Testing
+
+install:
+  - pip install -Ur requirements/tests.txt
+
+script:
+  - nosetests --with-coverage --cover-package=complainio
+
+after_success:
+  - coverage report
+  - coveralls
