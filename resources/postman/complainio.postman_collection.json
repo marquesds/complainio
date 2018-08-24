@@ -1,0 +1,245 @@
+{
+	"info": {
+		"_postman_id": "6ea2a293-de14-434e-9148-4a315441ccab",
+		"name": "complainio",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Save Complain",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "apikey=\"Lucas.DmDTqQ.6z_xYvgyH5J4GZpbdiGity9WSlU\""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"title\": \"Problema com app do banco\",\n\t\"description\": \"Tento abrir o app, mas não consigo.\",\n\t\"company\": {\n\t\t\"name\": \"Itaú\"\n\t},\n\t\"locale\": {\n\t\t\"city\": \"São Paulo\",\n\t\t\"state\": \"SP\"\n\t}\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:9000/api/v1/complains",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"v1",
+						"complains"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Complains",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "apikey=\"Lucas.DmDTqQ.6z_xYvgyH5J4GZpbdiGity9WSlU\""
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:9000/api/v1/complains",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"v1",
+						"complains"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Complain By Id",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "apikey=\"Lucas.DmDTqQ.6z_xYvgyH5J4GZpbdiGity9WSlU\""
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:9000/api/v1/complains/5b7db197690f535b7aea9983",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"v1",
+						"complains",
+						"5b7db197690f535b7aea9983"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Complain By Id",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "apikey=\"Lucas.DmDTqQ.6z_xYvgyH5J4GZpbdiGity9WSlU\""
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:9000/api/v1/complains/5b7db277690f536383011e7f",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"v1",
+						"complains",
+						"5b7db277690f536383011e7f"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Complain Count By Locale",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "apikey=\"Lucas.DmDTqQ.6z_xYvgyH5J4GZpbdiGity9WSlU\""
+					}
+				],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:9000/api/v1/complains/count",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"v1",
+						"complains",
+						"count"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Complain Locale Count By Locale",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "apikey=\"Lucas.DmDTqQ.6z_xYvgyH5J4GZpbdiGity9WSlU\""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"city\": \"São Paulo\",\n\t\"state\": \"SP\"\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:9000/api/v1/complains/count",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"v1",
+						"complains",
+						"count"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Complain",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "apikey=\"Lucas.DmDTqQ.6z_xYvgyH5J4GZpbdiGity9WSlU\""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"title\": \"Problema com app do banco\",\n\t\"description\": \"Tento abrir o app, mas não consigo.\",\n\t\"company\": {\n\t\t\"name\": \"Banco do Brasil\"\n\t},\n\t\"locale\": {\n\t\t\"city\": \"São Paulo\",\n\t\t\"state\": \"SP\"\n\t}\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:9000/api/v1/complains/5b7db197690f535b7aea9983",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"v1",
+						"complains",
+						"5b7db197690f535b7aea9983"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
