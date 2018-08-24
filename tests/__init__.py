@@ -1,11 +1,18 @@
 import unittest
 
+import mongomock
+
 from complainio import create_app, logger
 
 
 class BaseTestCase(unittest.TestCase):
     logger.disabled = True
     maxDiff = None
+
+    def get_collection(self):
+        mongoclient = mongomock.MongoClient()
+        database = mongoclient.complainio
+        return database.complains
 
     def create_app(self):
         app = create_app('Testing')

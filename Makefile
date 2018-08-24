@@ -9,10 +9,10 @@ clean:
 	rm -f pylint.out
 
 test: clean
-	nosetests -s --rednose
+	ENVIRONMENT=Testing nosetests -s --rednose
 
 coverage: clean
-	nosetests --with-coverage --cover-package=complainio
+	ENVIRONMENT=Testing nosetests --with-coverage --cover-package=complainio
 
 bandit: clean
 	bandit -r complainio
