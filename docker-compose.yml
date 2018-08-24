@@ -1,0 +1,35 @@
+version: '3'
+services:
+  complainio:
+    build: .
+    container_name: "complainio"
+    environment:
+      - ENVIRONMENT=Production
+      - MONGO_URI=mongodb://mongodb.complain.io:27017/complainio
+    ports:
+      - 9000:9000
+    links:
+      - mongodb
+    depends_on:
+      - mongodb
+    networks:
+      - complainio_network
+  mongodb:
+    image: mongo:latest
+    container_name: "mongodb"
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+    volumes:
+      - ./data/db:/data/db
+    ports:
+      - 27017:27017
+    command: mongod --smallfiles --logpath=/dev/null # --quiet
+    networks:
+      complainio_network:
+        aliases:
+        - mongodb.complain.io
+
+networks:
+  complainio_network:
+    driver: bridge
